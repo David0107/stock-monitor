@@ -3,37 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>科技半导体双市场均值回归 | 专属监控</title>
+  <title>炒股韭菜王 | 双市场均值回归监控</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { darkMode: 'class' }</script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
     body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+    .dark .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
-  <!-- 顶部导航 -->
-  <header class="border-b border-slate-200/80 dark:border-slate-800 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md sticky top-0 z-20">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center gap-2">
-      <div class="font-bold text-base md:text-lg flex items-center gap-2 tracking-tight">
-        <span class="text-xl">🏇</span>
-        <span>科技马前卒 <span class="hidden sm:inline text-xs font-normal text-slate-400">| 双市场监控</span></span>
+<body class="bg-gradient-to-br from-slate-50 via-emerald-50/20 to-slate-100 text-slate-800 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
+
+  <!-- 顶部导航栏 -->
+  <header class="border-b border-slate-200/80 dark:border-slate-800 glass-card sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center gap-2">
+      <div class="font-extrabold text-base md:text-lg flex items-center gap-2 tracking-tight">
+        <span class="text-2xl">🥬</span>
+        <span class="bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">
+          炒股韭菜王
+        </span>
+        <span class="hidden md:inline text-xs font-medium px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
+          拒绝追高·均值回归
+        </span>
       </div>
 
       <!-- 市场切换 Tab -->
-      <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs md:text-sm font-semibold">
-        <button id="tabCN" onclick="switchMarket('cn')" class="px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-orange-600 dark:text-orange-400 transition">
-          🇨🇳 大A半导体
+      <div class="flex bg-slate-200/70 dark:bg-slate-800 p-1 rounded-xl text-xs md:text-sm font-bold">
+        <button id="tabCN" onclick="switchMarket('cn')" class="px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-emerald-600 dark:text-emerald-400 transition">
+          🇨🇳 大A (半导体+纳指)
         </button>
         <button id="tabUS" onclick="switchMarket('us')" class="px-3.5 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 transition">
-          🇺🇸 美股AI巨头
+          🇺🇸 美股 (七姐妹+ETF)
         </button>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="copySummary()" title="复制今日监控摘要" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
-          📋 <span class="hidden sm:inline">复制摘要</span>
+        <button onclick="toggleCalcModal()" title="补仓摊薄成本计算器" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 transition">
+          🧮 <span class="hidden sm:inline">补仓试算</span>
+        </button>
+        <button onclick="copySummary()" title="复制今日监控日报" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
+          📋 <span class="hidden sm:inline">复制日报</span>
         </button>
         <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
           🌙
@@ -42,27 +53,27 @@
     </div>
   </header>
 
-  <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-1">
-    <!-- 头部 Hero 区 -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-8 flex-1">
+    <!-- Hero 标题区 -->
     <div class="text-center mb-8">
-      <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-orange-100/80 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/50 rounded-full mb-3">
-        <span>⚡</span> Whitehorse MA120 均值回归策略
+      <span class="inline-flex items-center gap-1.5 px-3.5 py-1 text-xs font-bold bg-emerald-100/80 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 rounded-full mb-3">
+        <span>🌱</span> 韭菜自我修养 · MA120 极值偏离监控
       </span>
-      <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent mb-3">
-        耐心等待极值偏离
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2.5">
+        别人恐慌我贪婪，<span class="text-emerald-600 dark:text-emerald-400">不到买点绝不出手</span>
       </h1>
-      <p class="text-slate-500 dark:text-slate-400 text-xs md:text-sm max-w-xl mx-auto">
-        专注监控核心半导体与算力龙头（兴森科技、长电科技、英伟达、甲骨文），在情绪冰点分批建仓，在狂热溢价时止盈。
+      <p class="text-slate-500 dark:text-slate-400 text-xs md:text-sm max-w-2xl mx-auto">
+        实时追踪大A半导体与跨境纳指 ETF、美股科技七姐妹及核心宽基，用量化纪律克服追涨杀跌。
       </p>
 
       <!-- 状态与历史快照选择 -->
       <div class="mt-5 flex flex-wrap justify-center items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-        <span id="updateTime" class="bg-white dark:bg-slate-900 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-2xs">
+        <span id="updateTime" class="bg-white dark:bg-slate-900 px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-2xs">
           ⏳ 正在同步最新行情...
         </span>
-        <div class="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-800">
           <span>📅 历史快照:</span>
-          <select id="historySelect" class="bg-transparent font-mono font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer">
+          <select id="historySelect" class="bg-transparent font-mono font-semibold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer">
             <option value="">最新数据</option>
           </select>
         </div>
@@ -75,14 +86,21 @@
     <!-- 顶部三栏信号卡片 -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" id="signalCards"></div>
 
-    <!-- 工具筛选栏 -->
-    <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-      <div class="flex items-center gap-2 text-xs">
-        <button onclick="setFilter('all')" id="btnFilterAll" class="px-3 py-1.5 rounded-lg font-medium bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900">全部标的</button>
-        <button onclick="setFilter('active')" id="btnFilterActive" class="px-3 py-1.5 rounded-lg font-medium bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800">仅看触发/临近</button>
+    <!-- 工具筛选与排序栏 -->
+    <div class="flex flex-wrap justify-between items-center gap-3 mb-4 bg-white/70 dark:bg-slate-900/70 p-3 rounded-2xl border border-slate-200/70 dark:border-slate-800">
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <button onclick="setFilter('all')" id="btnFilterAll" class="px-3 py-1.5 rounded-lg font-semibold bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 transition">
+          全部标的
+        </button>
+        <button onclick="setFilter('active')" id="btnFilterActive" class="px-3 py-1.5 rounded-lg font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">
+          🎯 仅看触发/临近
+        </button>
+        <button onclick="toggleSort()" id="btnSort" class="px-3 py-1.5 rounded-lg font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">
+          ↕️ 按偏离度排序: 默认
+        </button>
       </div>
       <div class="text-xs text-slate-400">
-        💡 点击股票名称可直达实时 K 线图
+        💡 点击股票名称查看实时 K 线，点击数值可快速填入补仓试算器
       </div>
     </div>
 
@@ -90,20 +108,67 @@
     <div id="tablesContainer" class="space-y-8"></div>
   </main>
 
+  <!-- 补仓成本试算器弹窗 -->
+  <div id="calcModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-base flex items-center gap-2">🧮 韭菜补仓摊薄成本试算器</h3>
+        <button onclick="toggleCalcModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-500 mb-1">当前持仓成本价</label>
+            <input type="number" id="c_oldPrice" value="30" step="0.01" oninput="calcAvg()" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-500 mb-1">当前持仓股数</label>
+            <input type="number" id="c_oldQty" value="1000" step="100" oninput="calcAvg()" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-500 mb-1">计划补仓价格 (买点1/2)</label>
+            <input type="number" id="c_newPrice" value="24" step="0.01" oninput="calcAvg()" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-500 mb-1">计划补仓股数</label>
+            <input type="number" id="c_newQty" value="1000" step="100" oninput="calcAvg()" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono">
+          </div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/70 dark:border-emerald-800/50 mt-2 space-y-1.5">
+          <div class="flex justify-between">
+            <span class="text-slate-600 dark:text-slate-300">补仓后综合成本价：</span>
+            <span id="c_resAvg" class="font-mono font-bold text-sm text-emerald-600 dark:text-emerald-400">27.00</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-600 dark:text-slate-300">回本所需涨幅：</span>
+            <span id="c_resGain" class="font-mono font-semibold text-slate-700 dark:text-slate-200">+12.50%</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-600 dark:text-slate-300">补仓追加资金：</span>
+            <span id="c_resCash" class="font-mono text-slate-500">24,000.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 页脚 -->
   <footer class="border-t border-slate-200/80 dark:border-slate-800 py-6 text-center text-xs text-slate-400">
-    <p>⚠️ 策略提示：均值回归在单边下跌趋势中可能出现钝化，务必严格分批（买点1 / 买点2）执行，不构成投资建议。</p>
+    <p>🥬 炒股韭菜王量化看板 · 严格分批执行（买点1 / 买点2），数据仅供参考，不构成投资建议。</p>
   </footer>
 
   <!-- Toast 提示 -->
-  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50"></div>
 
   <script>
     let currentMarket = 'cn';
     let filterMode = 'all';
+    let sortMode = 'default'; // default | asc (最超跌优先)
     let globalData = null;
 
-    // 暗黑模式初始化与切换
+    // 暗黑模式
     const themeBtn = document.getElementById('themeToggle');
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
@@ -122,9 +187,32 @@
       setTimeout(() => t.classList.add('opacity-0'), 2500);
     }
 
+    function toggleCalcModal(prefillNewPrice = null) {
+      const modal = document.getElementById('calcModal');
+      if (prefillNewPrice !== null) {
+        document.getElementById('c_newPrice').value = prefillNewPrice;
+        calcAvg();
+      }
+      modal.classList.toggle('hidden');
+      modal.classList.toggle('flex');
+    }
+
+    function calcAvg() {
+      const p1 = parseFloat(document.getElementById('c_oldPrice').value) || 0;
+      const q1 = parseFloat(document.getElementById('c_oldQty').value) || 0;
+      const p2 = parseFloat(document.getElementById('c_newPrice').value) || 0;
+      const q2 = parseFloat(document.getElementById('c_newQty').value) || 0;
+      if (q1 + q2 <= 0) return;
+      const avg = (p1 * q1 + p2 * q2) / (q1 + q2);
+      const gain = p2 > 0 ? ((avg - p2) / p2 * 100) : 0;
+      document.getElementById('c_resAvg').textContent = avg.toFixed(3).replace(/\.?0+$/, '');
+      document.getElementById('c_resGain').textContent = (gain >= 0 ? '+' : '') + gain.toFixed(2) + '%';
+      document.getElementById('c_resCash').textContent = (p2 * q2).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     function switchMarket(market) {
       currentMarket = market;
-      const activeClass = "px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-orange-600 dark:text-orange-400 transition";
+      const activeClass = "px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-emerald-600 dark:text-emerald-400 transition";
       const inactiveClass = "px-3.5 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 transition";
       document.getElementById('tabCN').className = market === 'cn' ? activeClass : inactiveClass;
       document.getElementById('tabUS').className = market === 'us' ? activeClass : inactiveClass;
@@ -133,14 +221,19 @@
 
     function setFilter(mode) {
       filterMode = mode;
-      const activeBtn = "px-3 py-1.5 rounded-lg font-medium bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900";
-      const normalBtn = "px-3 py-1.5 rounded-lg font-medium bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800";
+      const activeBtn = "px-3 py-1.5 rounded-lg font-semibold bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 transition";
+      const normalBtn = "px-3 py-1.5 rounded-lg font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition";
       document.getElementById('btnFilterAll').className = mode === 'all' ? activeBtn : normalBtn;
       document.getElementById('btnFilterActive').className = mode === 'active' ? activeBtn : normalBtn;
       if (globalData) renderTables(globalData[currentMarket] || []);
     }
 
-    // 加载历史快照日期列表
+    function toggleSort() {
+      sortMode = sortMode === 'default' ? 'asc' : 'default';
+      document.getElementById('btnSort').textContent = sortMode === 'asc' ? '⬇️ 按偏离度排序: 最超跌优先' : '↕️ 按偏离度排序: 默认';
+      if (globalData) renderTables(globalData[currentMarket] || []);
+    }
+
     async function loadHistoryDates() {
       try {
         const res = await fetch('./history/dates.json?t=' + Date.now());
@@ -184,13 +277,13 @@
       const upColor = currentMarket === 'cn' ? 'text-red-500' : 'text-emerald-500';
       const downColor = currentMarket === 'cn' ? 'text-emerald-500' : 'text-red-500';
       document.getElementById('indexBar').innerHTML = list.map(idx => `
-        <div class="bg-white dark:bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 flex justify-between items-center text-xs">
+        <div class="glass-card px-4 py-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex justify-between items-center text-xs shadow-2xs">
           <div>
-            <span class="font-semibold text-slate-700 dark:text-slate-200">${idx.name}</span>
+            <span class="font-bold text-slate-700 dark:text-slate-200">${idx.name}</span>
             <span class="font-mono ml-1.5 text-slate-500">${idx.price}</span>
           </div>
           <div class="text-right font-mono">
-            <span class="${idx.change >= 0 ? upColor : downColor} font-semibold">${idx.change > 0 ? '+' : ''}${idx.change}%</span>
+            <span class="${idx.change >= 0 ? upColor : downColor} font-bold">${idx.change > 0 ? '+' : ''}${idx.change}%</span>
             <span class="text-slate-400 ml-1.5">偏离${idx.deviation > 0 ? '+' : ''}${idx.deviation}%</span>
           </div>
         </div>
@@ -203,60 +296,65 @@
       const sellList = stocks.filter(s => s.status === '卖出信号');
 
       const cardHTML = (title, icon, border, badgeBg, list) => `
-        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-xs border border-slate-200/80 dark:border-slate-800 border-l-4 ${border}">
+        <div class="glass-card rounded-2xl p-5 shadow-xs border border-slate-200/80 dark:border-slate-800 border-l-4 ${border}">
           <div class="flex justify-between items-center mb-3">
             <span class="font-bold text-sm flex items-center gap-1.5">${icon} ${title}</span>
             <span class="px-2.5 py-0.5 text-xs rounded-full font-mono font-bold ${badgeBg}">${list.length}</span>
           </div>
-          <div class="space-y-2.5 text-sm">
+          <div class="space-y-2 text-sm max-h-40 overflow-y-auto pr-1">
             ${list.length ? list.map(s => `
-              <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 rounded-lg">
-                <a href="${s.url}" target="_blank" class="font-medium hover:text-orange-500 transition">
+              <div class="flex justify-between items-center bg-slate-100/70 dark:bg-slate-800/70 px-3 py-1.5 rounded-xl">
+                <a href="${s.url}" target="_blank" class="font-semibold hover:text-emerald-500 transition truncate">
                   ${s.name} <span class="text-slate-400 text-xs font-mono">${s.code}</span>
                 </a>
-                <span class="font-mono font-semibold text-xs">${s.price} <span class="text-slate-400">(${s.deviation > 0 ? '+' : ''}${s.deviation}%)</span></span>
+                <span class="font-mono font-bold text-xs shrink-0 ml-2">${s.price} <span class="text-slate-400">(${s.deviation > 0 ? '+' : ''}${s.deviation}%)</span></span>
               </div>
-            `).join('') : '<div class="text-slate-400 text-xs py-1">暂无触发标的，耐心观望</div>'}
+            `).join('') : '<div class="text-slate-400 text-xs py-2">暂无触发标的，管住手耐心等</div>'}
           </div>
         </div>
       `;
 
       document.getElementById('signalCards').innerHTML =
-        cardHTML('触发买入 / 补仓', '🟢', 'border-l-emerald-500', 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300', buyList) +
+        cardHTML('触发买入 / 极值补仓', '🟢', 'border-l-emerald-500', 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300', buyList) +
         cardHTML('即将到位 (差距 < 3%)', '📉', 'border-l-blue-500', 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300', nearList) +
-        cardHTML('触发卖出 (过热偏离)', '🚨', 'border-l-rose-500', 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300', sellList);
+        cardHTML('触发卖出 (过热止盈)', '🚨', 'border-l-rose-500', 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300', sellList);
     }
 
     function getStatusBadge(status) {
       const map = {
-        '极值补仓': 'bg-emerald-600 text-white',
+        '极值补仓': 'bg-emerald-600 text-white shadow-xs',
         '买入信号': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
         '即将到位': 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
         '卖出信号': 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
         '正常': 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
       };
-      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold ${map[status] || map['正常']}">${status}</span>`;
+      return `<span class="px-2.5 py-1 rounded-full text-xs font-bold ${map[status] || map['正常']}">${status}</span>`;
     }
 
     function renderTables(stocks) {
-      let filtered = filterMode === 'active' ? stocks.filter(s => s.status !== '正常') : stocks;
+      let list = [...stocks];
+      if (filterMode === 'active') list = list.filter(s => s.status !== '正常');
+      if (sortMode === 'asc') list.sort((a, b) => a.deviation - b.deviation);
+
       const catConfig = currentMarket === 'cn' ? [
-        { key: 'semi', title: '🔬 半导体封装与载板核心 (买点1: -15% | 买点2: -25% | 卖点: +20%)' }
+        { key: 'semi', title: '🔬 大A半导体封装与载板 (买1: -15% | 买2: -25% | 卖: +20%)' },
+        { key: 'qdii', title: '🌏 大A跨境纳指与标普 ETF (买1: -10% | 买2: -18% | 卖: +15%)' }
       ] : [
-        { key: 'ai_tech', title: '🤖 AI 算力与云基础设施龙头 (买点1: -18% | 买点2: -28% | 卖点: +25%)' }
+        { key: 'mag7', title: '👑 美股科技七姐妹 & AI巨头 (买1: -18% | 买2: -28% | 卖: +25%)' },
+        { key: 'etf',  title: '🏛️ 美股核心宽基指数 ETF (买1: -10% | 买2: -18% | 卖: +15%)' }
       ];
 
       const upColor = currentMarket === 'cn' ? 'text-red-500' : 'text-emerald-500';
       const downColor = currentMarket === 'cn' ? 'text-emerald-500' : 'text-red-500';
 
       document.getElementById('tablesContainer').innerHTML = catConfig.map(cat => {
-        const rows = filtered.filter(s => s.category === cat.key);
+        const rows = list.filter(s => s.category === cat.key);
         return `
           <section>
-            <h2 class="text-sm md:text-base font-bold mb-3 flex items-center gap-2 text-slate-700 dark:text-slate-200">${cat.title}</h2>
-            <div class="overflow-x-auto bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800">
+            <h2 class="text-sm md:text-base font-extrabold mb-3 flex items-center gap-2 text-slate-800 dark:text-slate-100">${cat.title}</h2>
+            <div class="overflow-x-auto glass-card rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800">
               <table class="w-full text-sm text-left whitespace-nowrap">
-                <thead class="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
+                <thead class="bg-slate-100/70 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
                   <tr>
                     <th class="p-3.5">代码</th>
                     <th class="p-3.5">名称</th>
@@ -270,35 +368,38 @@
                     <th class="p-3.5">状态</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800/80">
                   ${rows.length ? rows.map(s => `
-                    <tr class="hover:bg-slate-50/90 dark:hover:bg-slate-800/40 transition">
+                    <tr class="hover:bg-slate-50/90 dark:hover:bg-slate-800/50 transition">
                       <td class="p-3.5 font-mono text-xs text-slate-400">${s.code}</td>
-                      <td class="p-3.5 font-semibold">
-                        <a href="${s.url}" target="_blank" class="hover:text-orange-500 transition flex items-center gap-1">
+                      <td class="p-3.5 font-bold">
+                        <a href="${s.url}" target="_blank" class="hover:text-emerald-500 transition inline-flex items-center gap-1">
                           ${s.name} <span class="text-[10px] text-slate-400">↗</span>
                         </a>
                       </td>
-                      <td class="p-3.5 font-bold font-mono">${s.price}</td>
-                      <td class="p-3.5 font-mono font-medium ${s.change >= 0 ? upColor : downColor}">
+                      <td onclick="toggleCalcModal(${s.price})" title="点击填入补仓试算器" class="p-3.5 font-bold font-mono cursor-pointer hover:text-emerald-500 underline decoration-dotted underline-offset-4">
+                        ${s.price}
+                      </td>
+                      <td class="p-3.5 font-mono font-semibold ${s.change >= 0 ? upColor : downColor}">
                         ${s.change > 0 ? '+' : ''}${s.change}%
                       </td>
                       <td class="p-3.5 font-mono text-xs text-amber-600 dark:text-amber-400">
                         ${s.dividend}${s.high_div ? ' 🔥' : ''}
                       </td>
-                      <td class="p-3.5 font-mono font-bold ${s.deviation <= -15 ? 'text-emerald-500' : (s.deviation >= 20 ? 'text-rose-500' : '')}">
+                      <td class="p-3.5 font-mono font-extrabold ${s.deviation <= -10 ? 'text-emerald-500' : (s.deviation >= 15 ? 'text-rose-500' : '')}">
                         ${s.deviation > 0 ? '+' : ''}${s.deviation}%
                       </td>
                       <td class="p-3.5 w-36">
-                        <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden relative" title="当前位于区间 ${s.pos_pct}%">
-                          <div class="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500" style="width: ${s.pos_pct}%"></div>
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full relative flex items-center" title="当前位于买2至卖点区间 ${s.pos_pct}%">
+                          <div class="h-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500" style="width: ${s.pos_pct}%"></div>
+                          <div class="w-3 h-3 rounded-full bg-white border-2 border-slate-800 dark:border-white shadow-sm absolute -ml-1.5" style="left: ${s.pos_pct}%"></div>
                         </div>
                       </td>
                       <td class="p-3.5 font-mono text-xs text-slate-500">
-                        <span class="text-emerald-600 dark:text-emerald-400 font-semibold">${s.buy1}</span> / ${s.buy2}
+                        <span class="text-emerald-600 dark:text-emerald-400 font-bold">${s.buy1}</span> / ${s.buy2}
                       </td>
                       <td class="p-3.5 font-mono text-xs text-slate-500">
-                        ${s.ma120} / <span class="text-rose-500 font-semibold">${s.sell}</span>
+                        ${s.ma120} / <span class="text-rose-500 font-bold">${s.sell}</span>
                       </td>
                       <td class="p-3.5">${getStatusBadge(s.status)}</td>
                     </tr>
@@ -314,10 +415,11 @@
     function copySummary() {
       if (!globalData) return;
       const all = [...(globalData.cn || []), ...(globalData.us || [])];
-      const lines = [`📊 均值回归监控日报 (${globalData.date})`, ...all.map(s => `• ${s.name}(${s.code}): 现价 ${s.price} | 偏离 ${s.deviation > 0 ? '+' : ''}${s.deviation}% | 状态: ${s.status}`)];
-      navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('✅ 已复制今日监控摘要到剪贴板'));
+      const lines = [`🥬 炒股韭菜王监控日报 (${globalData.date})`, ...all.map(s => `• ${s.name}(${s.code}): 现价 ${s.price} | 偏离 ${s.deviation > 0 ? '+' : ''}${s.deviation}% | ${s.status}`)];
+      navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('✅ 已复制今日监控日报到剪贴板'));
     }
 
+    calcAvg();
     loadHistoryDates();
     fetchAndRender('./data.json?t=' + Date.now());
   </script>
