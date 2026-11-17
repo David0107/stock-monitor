@@ -3,7 +3,7 @@
 > **别人恐慌我贪婪，不到买点绝不出手。**  
 > 基于 GitHub Actions + 静态网页构建的零成本自动化量化监控看板，每日自动抓取大A半导体、跨境纳指 ETF、美股科技七姐妹及核心宽基行情，计算 120 日均线（MA120）偏离度与分批买卖信号。
 
-🔗 **在线监控看板**：[https://stock-monitor.dip-buyer.workers.dev](https://stock-monitor.dip-buyer.workers.dev)
+🔗 **在线监控看板**：[https://david0107.github.io/stock-monitor/](https://david0107.github.io/stock-monitor/)
 
 ---
 
