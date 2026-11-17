@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>科技半导体双市场均值回归 | 专属监控</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
+  <!-- 顶部导航 -->
+  <header class="border-b border-slate-200/80 dark:border-slate-800 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center gap-2">
+      <div class="font-bold text-base md:text-lg flex items-center gap-2 tracking-tight">
+        <span class="text-xl">🏇</span>
+        <span>科技马前卒 <span class="hidden sm:inline text-xs font-normal text-slate-400">| 双市场监控</span></span>
+      </div>
+
+      <!-- 市场切换 Tab -->
+      <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs md:text-sm font-semibold">
+        <button id="tabCN" onclick="switchMarket('cn')" class="px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-orange-600 dark:text-orange-400 transition">
+          🇨🇳 大A半导体
+        </button>
+        <button id="tabUS" onclick="switchMarket('us')" class="px-3.5 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 transition">
+          🇺🇸 美股AI巨头
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="copySummary()" title="复制今日监控摘要" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
+          📋 <span class="hidden sm:inline">复制摘要</span>
+        </button>
+        <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition">
+          🌙
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-1">
+    <!-- 头部 Hero 区 -->
+    <div class="text-center mb-8">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold bg-orange-100/80 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/50 rounded-full mb-3">
+        <span>⚡</span> Whitehorse MA120 均值回归策略
+      </span>
+      <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent mb-3">
+        耐心等待极值偏离
+      </h1>
+      <p class="text-slate-500 dark:text-slate-400 text-xs md:text-sm max-w-xl mx-auto">
+        专注监控核心半导体与算力龙头（兴森科技、长电科技、英伟达、甲骨文），在情绪冰点分批建仓，在狂热溢价时止盈。
+      </p>
+
+      <!-- 状态与历史快照选择 -->
+      <div class="mt-5 flex flex-wrap justify-center items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+        <span id="updateTime" class="bg-white dark:bg-slate-900 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-2xs">
+          ⏳ 正在同步最新行情...
+        </span>
+        <div class="flex items-center gap-1.5 bg-white dark:bg-slate-900 px-3 py-1 rounded-full border border-slate-200 dark:border-slate-800">
+          <span>📅 历史快照:</span>
+          <select id="historySelect" class="bg-transparent font-mono font-medium text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer">
+            <option value="">最新数据</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 大盘基准温度计 -->
+    <div id="indexBar" class="grid grid-cols-2 gap-3 max-w-2xl mx-auto mb-8"></div>
+
+    <!-- 顶部三栏信号卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" id="signalCards"></div>
+
+    <!-- 工具筛选栏 -->
+    <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+      <div class="flex items-center gap-2 text-xs">
+        <button onclick="setFilter('all')" id="btnFilterAll" class="px-3 py-1.5 rounded-lg font-medium bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900">全部标的</button>
+        <button onclick="setFilter('active')" id="btnFilterActive" class="px-3 py-1.5 rounded-lg font-medium bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800">仅看触发/临近</button>
+      </div>
+      <div class="text-xs text-slate-400">
+        💡 点击股票名称可直达实时 K 线图
+      </div>
+    </div>
+
+    <!-- 分类明细表格 -->
+    <div id="tablesContainer" class="space-y-8"></div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="border-t border-slate-200/80 dark:border-slate-800 py-6 text-center text-xs text-slate-400">
+    <p>⚠️ 策略提示：均值回归在单边下跌趋势中可能出现钝化，务必严格分批（买点1 / 买点2）执行，不构成投资建议。</p>
+  </footer>
+
+  <!-- Toast 提示 -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <script>
+    let currentMarket = 'cn';
+    let filterMode = 'all';
+    let globalData = null;
+
+    // 暗黑模式初始化与切换
+    const themeBtn = document.getElementById('themeToggle');
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+      themeBtn.textContent = '☀️';
+    }
+    themeBtn.onclick = () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.theme = isDark ? 'dark' : 'light';
+      themeBtn.textContent = isDark ? '☀️' : '🌙';
+    };
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('opacity-0');
+      setTimeout(() => t.classList.add('opacity-0'), 2500);
+    }
+
+    function switchMarket(market) {
+      currentMarket = market;
+      const activeClass = "px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-orange-600 dark:text-orange-400 transition";
+      const inactiveClass = "px-3.5 py-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 transition";
+      document.getElementById('tabCN').className = market === 'cn' ? activeClass : inactiveClass;
+      document.getElementById('tabUS').className = market === 'us' ? activeClass : inactiveClass;
+      if (globalData) renderAll();
+    }
+
+    function setFilter(mode) {
+      filterMode = mode;
+      const activeBtn = "px-3 py-1.5 rounded-lg font-medium bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900";
+      const normalBtn = "px-3 py-1.5 rounded-lg font-medium bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800";
+      document.getElementById('btnFilterAll').className = mode === 'all' ? activeBtn : normalBtn;
+      document.getElementById('btnFilterActive').className = mode === 'active' ? activeBtn : normalBtn;
+      if (globalData) renderTables(globalData[currentMarket] || []);
+    }
+
+    // 加载历史快照日期列表
+    async function loadHistoryDates() {
+      try {
+        const res = await fetch('./history/dates.json?t=' + Date.now());
+        if (!res.ok) return;
+        const dates = await res.json();
+        const select = document.getElementById('historySelect');
+        dates.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d;
+          opt.textContent = d;
+          select.appendChild(opt);
+        });
+        select.onchange = (e) => {
+          const val = e.target.value;
+          fetchAndRender(val ? `./history/${val}.json` : `./data.json?t=${Date.now()}`);
+        };
+      } catch (e) {}
+    }
+
+    async function fetchAndRender(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Not found');
+        globalData = await res.json();
+        document.getElementById('updateTime').textContent = `✅ 基准日期: ${globalData.date} (更新: ${globalData.updated_at})`;
+        renderAll();
+      } catch (e) {
+        document.getElementById('updateTime').textContent = '❌ 暂无数据，请先在 GitHub Actions 运行更新脚本';
+      }
+    }
+
+    function renderAll() {
+      const stocks = globalData[currentMarket] || [];
+      renderIndices();
+      renderSignals(stocks);
+      renderTables(stocks);
+    }
+
+    function renderIndices() {
+      const list = (globalData.indices && globalData.indices[currentMarket]) || [];
+      const upColor = currentMarket === 'cn' ? 'text-red-500' : 'text-emerald-500';
+      const downColor = currentMarket === 'cn' ? 'text-emerald-500' : 'text-red-500';
+      document.getElementById('indexBar').innerHTML = list.map(idx => `
+        <div class="bg-white dark:bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 flex justify-between items-center text-xs">
+          <div>
+            <span class="font-semibold text-slate-700 dark:text-slate-200">${idx.name}</span>
+            <span class="font-mono ml-1.5 text-slate-500">${idx.price}</span>
+          </div>
+          <div class="text-right font-mono">
+            <span class="${idx.change >= 0 ? upColor : downColor} font-semibold">${idx.change > 0 ? '+' : ''}${idx.change}%</span>
+            <span class="text-slate-400 ml-1.5">偏离${idx.deviation > 0 ? '+' : ''}${idx.deviation}%</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderSignals(stocks) {
+      const buyList = stocks.filter(s => s.status === '买入信号' || s.status === '极值补仓');
+      const nearList = stocks.filter(s => s.status === '即将到位');
+      const sellList = stocks.filter(s => s.status === '卖出信号');
+
+      const cardHTML = (title, icon, border, badgeBg, list) => `
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-xs border border-slate-200/80 dark:border-slate-800 border-l-4 ${border}">
+          <div class="flex justify-between items-center mb-3">
+            <span class="font-bold text-sm flex items-center gap-1.5">${icon} ${title}</span>
+            <span class="px-2.5 py-0.5 text-xs rounded-full font-mono font-bold ${badgeBg}">${list.length}</span>
+          </div>
+          <div class="space-y-2.5 text-sm">
+            ${list.length ? list.map(s => `
+              <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 rounded-lg">
+                <a href="${s.url}" target="_blank" class="font-medium hover:text-orange-500 transition">
+                  ${s.name} <span class="text-slate-400 text-xs font-mono">${s.code}</span>
+                </a>
+                <span class="font-mono font-semibold text-xs">${s.price} <span class="text-slate-400">(${s.deviation > 0 ? '+' : ''}${s.deviation}%)</span></span>
+              </div>
+            `).join('') : '<div class="text-slate-400 text-xs py-1">暂无触发标的，耐心观望</div>'}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('signalCards').innerHTML =
+        cardHTML('触发买入 / 补仓', '🟢', 'border-l-emerald-500', 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300', buyList) +
+        cardHTML('即将到位 (差距 < 3%)', '📉', 'border-l-blue-500', 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300', nearList) +
+        cardHTML('触发卖出 (过热偏离)', '🚨', 'border-l-rose-500', 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300', sellList);
+    }
+
+    function getStatusBadge(status) {
+      const map = {
+        '极值补仓': 'bg-emerald-600 text-white',
+        '买入信号': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300',
+        '即将到位': 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+        '卖出信号': 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300',
+        '正常': 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+      };
+      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold ${map[status] || map['正常']}">${status}</span>`;
+    }
+
+    function renderTables(stocks) {
+      let filtered = filterMode === 'active' ? stocks.filter(s => s.status !== '正常') : stocks;
+      const catConfig = currentMarket === 'cn' ? [
+        { key: 'semi', title: '🔬 半导体封装与载板核心 (买点1: -15% | 买点2: -25% | 卖点: +20%)' }
+      ] : [
+        { key: 'ai_tech', title: '🤖 AI 算力与云基础设施龙头 (买点1: -18% | 买点2: -28% | 卖点: +25%)' }
+      ];
+
+      const upColor = currentMarket === 'cn' ? 'text-red-500' : 'text-emerald-500';
+      const downColor = currentMarket === 'cn' ? 'text-emerald-500' : 'text-red-500';
+
+      document.getElementById('tablesContainer').innerHTML = catConfig.map(cat => {
+        const rows = filtered.filter(s => s.category === cat.key);
+        return `
+          <section>
+            <h2 class="text-sm md:text-base font-bold mb-3 flex items-center gap-2 text-slate-700 dark:text-slate-200">${cat.title}</h2>
+            <div class="overflow-x-auto bg-white dark:bg-slate-900 rounded-2xl shadow-xs border border-slate-200/80 dark:border-slate-800">
+              <table class="w-full text-sm text-left whitespace-nowrap">
+                <thead class="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
+                  <tr>
+                    <th class="p-3.5">代码</th>
+                    <th class="p-3.5">名称</th>
+                    <th class="p-3.5">当前价</th>
+                    <th class="p-3.5">今日涨跌</th>
+                    <th class="p-3.5">股息率</th>
+                    <th class="p-3.5">MA120偏离</th>
+                    <th class="p-3.5">区间位置 (买2 → 卖)</th>
+                    <th class="p-3.5">买点1 / 买点2</th>
+                    <th class="p-3.5">MA120 / 卖点</th>
+                    <th class="p-3.5">状态</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                  ${rows.length ? rows.map(s => `
+                    <tr class="hover:bg-slate-50/90 dark:hover:bg-slate-800/40 transition">
+                      <td class="p-3.5 font-mono text-xs text-slate-400">${s.code}</td>
+                      <td class="p-3.5 font-semibold">
+                        <a href="${s.url}" target="_blank" class="hover:text-orange-500 transition flex items-center gap-1">
+                          ${s.name} <span class="text-[10px] text-slate-400">↗</span>
+                        </a>
+                      </td>
+                      <td class="p-3.5 font-bold font-mono">${s.price}</td>
+                      <td class="p-3.5 font-mono font-medium ${s.change >= 0 ? upColor : downColor}">
+                        ${s.change > 0 ? '+' : ''}${s.change}%
+                      </td>
+                      <td class="p-3.5 font-mono text-xs text-amber-600 dark:text-amber-400">
+                        ${s.dividend}${s.high_div ? ' 🔥' : ''}
+                      </td>
+                      <td class="p-3.5 font-mono font-bold ${s.deviation <= -15 ? 'text-emerald-500' : (s.deviation >= 20 ? 'text-rose-500' : '')}">
+                        ${s.deviation > 0 ? '+' : ''}${s.deviation}%
+                      </td>
+                      <td class="p-3.5 w-36">
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden relative" title="当前位于区间 ${s.pos_pct}%">
+                          <div class="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500" style="width: ${s.pos_pct}%"></div>
+                        </div>
+                      </td>
+                      <td class="p-3.5 font-mono text-xs text-slate-500">
+                        <span class="text-emerald-600 dark:text-emerald-400 font-semibold">${s.buy1}</span> / ${s.buy2}
+                      </td>
+                      <td class="p-3.5 font-mono text-xs text-slate-500">
+                        ${s.ma120} / <span class="text-rose-500 font-semibold">${s.sell}</span>
+                      </td>
+                      <td class="p-3.5">${getStatusBadge(s.status)}</td>
+                    </tr>
+                  `).join('') : `<tr><td colspan="10" class="p-6 text-center text-slate-400 text-xs">当前筛选条件下暂无标的</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }).join('');
+    }
+
+    function copySummary() {
+      if (!globalData) return;
+      const all = [...(globalData.cn || []), ...(globalData.us || [])];
+      const lines = [`📊 均值回归监控日报 (${globalData.date})`, ...all.map(s => `• ${s.name}(${s.code}): 现价 ${s.price} | 偏离 ${s.deviation > 0 ? '+' : ''}${s.deviation}% | 状态: ${s.status}`)];
+      navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('✅ 已复制今日监控摘要到剪贴板'));
+    }
+
+    loadHistoryDates();
+    fetchAndRender('./data.json?t=' + Date.now());
+  </script>
+</body>
+</html>
