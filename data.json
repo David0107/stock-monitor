@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-17",
+  "updated_at": "2026-11-17 06:29:03",
+  "indices": {
+    "cn": [
+      {
+        "name": "上证指数",
+        "price": 3579.6,
+        "change": -0.64,
+        "deviation": -8.09
+      },
+      {
+        "name": "科创50",
+        "price": 1216.27,
+        "change": 0.21,
+        "deviation": -26.09
+      }
+    ],
+    "us": [
+      {
+        "name": "纳斯达克",
+        "price": 24509.76,
+        "change": -2.49,
+        "deviation": -6.34
+      },
+      {
+        "name": "标普500",
+        "price": 7416.59,
+        "change": -1.92,
+        "deviation": -2.41
+      }
+    ]
+  },
+  "cn": [
+    {
+      "code": "002436",
+      "name": "兴森科技",
+      "category": "semi",
+      "price": 24.06,
+      "change": -1.03,
+      "dividend": "--",
+      "high_div": false,
+      "deviation": -35.06,
+      "buy1": 31.49,
+      "buy2": 27.79,
+      "ma120": 37.05,
+      "sell": 44.46,
+      "status": "极值补仓",
+      "pos_pct": 0,
+      "url": "https://quote.eastmoney.com/sz002436.html"
+    },
+    {
+      "code": "600584",
+      "name": "长电科技",
+      "category": "semi",
+      "price": 51.36,
+      "change": 1.7,
+      "dividend": "--",
+      "high_div": false,
+      "deviation": -30.18,
+      "buy1": 62.53,
+      "buy2": 55.17,
+      "ma120": 73.56,
+      "sell": 88.27,
+      "status": "极值补仓",
+      "pos_pct": 0,
+      "url": "https://quote.eastmoney.com/sh600584.html"
+    }
+  ],
+  "us": [
+    {
+      "code": "NVDA",
+      "name": "英伟达",
+      "category": "ai_tech",
+      "price": 156.14,
+      "change": -4.12,
+      "dividend": "64.0%",
+      "high_div": true,
+      "deviation": -26.07,
+      "buy1": 173.19,
+      "buy2": 152.07,
+      "ma120": 211.21,
+      "sell": 264.01,
+      "status": "买入信号",
+      "pos_pct": 3.6,
+      "url": "https://finance.yahoo.com/quote/NVDA"
+    },
+    {
+      "code": "ORCL",
+      "name": "甲骨文",
+      "category": "ai_tech",
+      "price": 119.09,
+      "change": -4.99,
+      "dividend": "168.0%",
+      "high_div": true,
+      "deviation": -19.28,
+      "buy1": 120.97,
+      "buy2": 106.22,
+      "ma120": 147.53,
+      "sell": 184.41,
+      "status": "买入信号",
+      "pos_pct": 16.5,
+      "url": "https://finance.yahoo.com/quote/ORCL"
+    }
+  ]
+}
