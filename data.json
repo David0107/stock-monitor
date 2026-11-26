@@ -1,6 +1,6 @@
 {
   "date": "2026-11-26",
-  "updated_at": "2026-11-26 03:41:10",
+  "updated_at": "2026-11-26 17:52:09",
   "indices": {
     "cn": [],
     "us": [
@@ -18,25 +18,7 @@
       }
     ]
   },
-  "cn": [
-    {
-      "code": "513100",
-      "name": "纳指ETF(国泰)",
-      "category": "qdii",
-      "price": 2.088,
-      "change": 1.9,
-      "dividend": "--",
-      "high_div": false,
-      "deviation": -5.69,
-      "buy1": 1.99,
-      "buy2": 1.82,
-      "ma120": 2.214,
-      "sell": 2.55,
-      "status": "正常",
-      "pos_pct": 36.7,
-      "url": "https://quote.eastmoney.com/sh513100.html"
-    }
-  ],
+  "cn": [],
   "us": [
     {
       "code": "NVDA",
@@ -44,7 +26,7 @@
       "category": "mag7",
       "price": 149.3,
       "change": -3.91,
-      "dividend": "64.0%",
+      "dividend": "67.0%",
       "high_div": true,
       "deviation": -28.0,
       "buy1": 170.04,
@@ -61,7 +43,7 @@
       "category": "mag7",
       "price": 355.58,
       "change": 0.43,
-      "dividend": "31.0%",
+      "dividend": "30.0%",
       "high_div": true,
       "deviation": 9.47,
       "buy1": 266.35,
@@ -78,7 +60,7 @@
       "category": "mag7",
       "price": 489.93,
       "change": -1.25,
-      "dividend": "79.0%",
+      "dividend": "80.0%",
       "high_div": true,
       "deviation": 4.03,
       "buy1": 386.18,
@@ -129,7 +111,7 @@
       "category": "mag7",
       "price": 609.89,
       "change": 3.4,
-      "dividend": "36.0%",
+      "dividend": "34.0%",
       "high_div": true,
       "deviation": -2.89,
       "buy1": 515.02,
@@ -163,7 +145,7 @@
       "category": "mag7",
       "price": 103.88,
       "change": -5.13,
-      "dividend": "183.0%",
+      "dividend": "193.0%",
       "high_div": true,
       "deviation": -26.15,
       "buy1": 115.35,
